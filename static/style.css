@@ -1,0 +1,196 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+h1, h2, h3 {
+    color: #2c3e50;
+}
+
+.mode-selector {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.mode-selector label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.color-palette {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin: 25px 0;
+    padding: 15px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.color-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.color-option:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.color-option.active {
+    border-color: #2c3e50;
+    transform: scale(1.15);
+    box-shadow: 0 0 0 3px white, 0 0 0 6px #2c3e50;
+}
+
+.upload-area {
+    border: 3px dashed #3498db;
+    border-radius: 8px;
+    padding: 40px;
+    margin: 30px 0;
+    cursor: pointer;
+    transition: all 0.3s;
+    background-color: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.upload-area.highlight {
+    border-color: #2980b9;
+    background-color: #eaf2f8;
+    box-shadow: 0 4px 20px rgba(41, 128, 185, 0.2);
+}
+
+.upload-area.uploading {
+    border-color: #f39c12;
+    background-color: #fef5e7;
+}
+
+.upload-icon {
+    font-size: 50px;
+    color: #3498db;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.upload-text {
+    font-size: 18px;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.result-area {
+    margin-top: 30px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.image-container {
+    position: relative;
+    --outline-color: white;
+    --outline-width: 3px;
+    --outline-blur: 6px;
+}
+
+.image-container svg {
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+#resultImage {
+    max-width: 100%;
+    max-height: 500px;
+    display: block;
+    margin: 0 auto;
+    position: relative;
+    transition: all 0.3s ease;
+    transform: translateZ(0);
+    /* Shadow effects controlled by JS based on mask processing */
+    /* The app.py backend should be returning a transparent PNG with only the object */
+    /* This ensures shadows apply only to the main object, not the background */
+    
+    /* No default shadow here - will be applied via JavaScript */
+}
+
+.download-btn {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #2ecc71;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+    border: none;
+    cursor: pointer;
+}
+
+.download-btn:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(46, 204, 113, 0.4);
+}
+
+/* Shadow intensity controls */
+.shadow-control {
+    margin: 20px 0;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.shadow-control label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.shadow-control input[type="range"]:focus ~ #resultImage::after {
+    border-width: calc(3px * var(--shadow-intensity, 1));
+    opacity: calc(0.8 * var(--shadow-intensity, 1));
+}
+
+.shadow-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #3498db;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#shadowValue {
+    display: inline-block;
+    margin-left: 10px;
+    font-weight: bold;
+    color: #3498db;
+}

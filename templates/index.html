@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Image Editor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Professional Image Editor</h1>
+        
+        <div class="mode-selector">
+            <label>
+                <input type="radio" name="mode" value="remove_bg" checked>
+                Remove Background
+            </label>
+            <label>
+                <input type="radio" name="mode" value="pro_mode">
+                Pro Mode
+            </label>
+        </div>
+        
+        <div id="proOptions" style="display: none;">
+            <h3>Select Background Color</h3>
+            <div class="color-palette">
+                {% for name, hex in pro_colors.items() %}
+                <div class="color-option" data-color="{{ hex }}" style="background-color: {{ hex }};"></div>
+                {% endfor %}
+            </div>
+            <input type="hidden" id="bgColor" name="bg_color" value="#0a1f3b">
+            <div class="shadow-control">
+                <label for="shadowIntensity">Shadow Intensity:</label>
+                <input type="range" id="shadowIntensity" min="0" max="200" value="100">
+                <span id="shadowValue">100%</span>
+            </div>
+        </div>
+        
+        <div class="upload-area" id="dropArea">
+            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            <div class="upload-icon">+</div>
+            <div class="upload-text">Drag & Drop your image here or click to browse</div>
+        </div>
+        
+        <div class="result-area" id="resultArea" style="display: none;">
+            <h2>Result</h2>
+            <div class="image-container">
+                <img id="resultImage" src="" alt="Result">
+            </div>
+            <a id="downloadBtn" class="download-btn" download="processed_image.png">Download Image</a>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
