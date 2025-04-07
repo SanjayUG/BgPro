@@ -8,8 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const modeRadios = document.querySelectorAll('input[name="mode"]');
   const colorOptions = document.querySelectorAll(".color-option");
   const bgColorInput = document.getElementById("bgColor");
-  const shadowIntensity = document.getElementById("shadowIntensity");
-  const shadowValue = document.getElementById("shadowValue");
 
   // Mode selection handler
   modeRadios.forEach((radio) => {
@@ -100,7 +98,6 @@ document.addEventListener("DOMContentLoaded", function () {
       document.querySelector('input[name="mode"]:checked').value
     );
     formData.append("bg_color", bgColorInput.value);
-    formData.append("shadow_intensity", shadowIntensity.value);
 
     dropArea.classList.add("uploading");
     dropArea.querySelector(".upload-text").textContent = "Processing...";
@@ -128,20 +125,5 @@ document.addEventListener("DOMContentLoaded", function () {
         dropArea.querySelector(".upload-text").textContent =
           "Drag & Drop your image here or click to browse";
       });
-  }
-});
-
-shadowIntensity.addEventListener("input", function () {
-  const value = this.value;
-  shadowValue.textContent = `${value}%`;
-
-  // Update the preview image shadow
-  if (resultImage.src) {
-    const intensity = value / 100;
-    resultImage.style.filter = `
-            drop-shadow(0 0 ${10 * intensity}px rgba(255,255,255,0.9))
-            drop-shadow(0 0 ${15 * intensity}px rgba(255,255,255,0.7))
-            drop-shadow(0 0 ${20 * intensity}px rgba(255,255,255,0.5))
-        `;
   }
 });

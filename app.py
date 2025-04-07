@@ -23,11 +23,25 @@ PRO_COLORS = {
     "forest": "#0a3b2a",
     "midnight": "#0a0a3b",
     "crimson": "#3b0a1a",
-    "slate": "#2a2a3b",
-    "emerald": "#0a3b3b"
+    "emerald": "#0a3b3b",
+    "coffee_brown": "#4a2c2a",
+    "deep_teal": "#0a373d",
+    "dark_olive": "#3b3b0a",
+    "aubergine": "#3a0a29",
+    "graphite": "#303030",
+    "royal_blue": "#1a237e",
+    "mahogany": "#4e2121",
+    "moss_green": "#2c3b1a",
+    "indigo": "#283593",
+    "deep_maroon": "#4a1010",
+    "dark_taupe": "#483c32",
+    "steel_blue": "#1f4e79",
+    "dark_khaki": "#3c3923",
+    "muted_plum": "#673147",
+    "dark_cyan": "#045d5d"
 }
 
-def process_image(input_image, mode, bg_color=None, shadow_intensity=100):
+def process_image(input_image, mode, bg_color=None):
     # Remove background
     output_image = remove(input_image)
     
@@ -35,36 +49,22 @@ def process_image(input_image, mode, bg_color=None, shadow_intensity=100):
         return output_image
         
     elif mode == "pro_mode" and output_image.mode == 'RGBA':
-        # Convert shadow_intensity to enhancement factors
-        # Higher intensity = thicker/bolder shadow, lower intensity = thinner shadow
-        shadow_factor = float(shadow_intensity) / 100.0
-        blur_radius = max(0.5, 4.0 * shadow_factor)  # Adjust blur based on intensity
-        
-        # Calculate expansion size - must be odd number for MaxFilter
-        # Ensure it's at least 3 (minimum valid size) and odd
-        raw_size = max(3, int(7 * shadow_factor))
-        expansion_size = raw_size if raw_size % 2 == 1 else raw_size + 1
-        
         # Split channels
         r, g, b, a = output_image.split()
         
         # Create the mask for the object
         shadow = a.point(lambda x: 255 if x > 20 else 0)  # Lower threshold to capture more of the object
         
-        # Expand the mask to control the thickness of the white glow
-        if shadow_factor > 0.1:  # Apply expansion at lower threshold for more consistent glow
-            # Apply multiple passes for smoother expansion at higher intensities
-            expansion_passes = max(1, min(3, int(shadow_factor * 3)))
-            for _ in range(expansion_passes):
-                shadow = shadow.filter(ImageFilter.MaxFilter(expansion_size))
-            
-        # Apply blur to create soft glow effect - less blur for crisper white
-        shadow = shadow.filter(ImageFilter.GaussianBlur(radius=blur_radius))
+        # Fixed narrow border size (approximately 0.3 cm / ~9 pixels)
+        expansion_size = 9
         
-        # Ensure maximum brightness for pitch white glow
-        # Higher intensity makes the white more prominent
-        shadow_opacity = min(255, int(255 * shadow_factor))
-        shadow = shadow.point(lambda x: shadow_opacity if x > 50 else 0)
+        # Apply MaxFilter for consistent expansion (creates the white border)
+        # Using two passes for smoother edge
+        shadow = shadow.filter(ImageFilter.MaxFilter(expansion_size))
+        shadow = shadow.filter(ImageFilter.MaxFilter(5))
+        
+        # Apply slight blur for softer edge
+        shadow = shadow.filter(ImageFilter.GaussianBlur(radius=1.5))
         
         # Create a pitch white (255,255,255) shadow image with the shadow alpha
         shadow_img = Image.new('RGBA', output_image.size, (255, 255, 255, 0))
@@ -107,7 +107,6 @@ def index():
         file = request.files['file']
         mode = request.form.get('mode', 'remove_bg')
         bg_color = request.form.get('bg_color', '#0a1f3b')
-        shadow_intensity = request.form.get('shadow_intensity', '100')
         
         if file.filename == '':
             return jsonify({'error': 'No selected file'}), 400
@@ -124,8 +123,7 @@ def index():
             output_image = process_image(
                 input_image, 
                 mode, 
-                bg_rgba, 
-                shadow_intensity
+                bg_rgba
             )
             
             buffered = BytesIO()
@@ -133,8 +131,7 @@ def index():
             img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
             
             return jsonify({
-                'image': f"data:image/png;base64,{img_str}",
-                'shadow_intensity': shadow_intensity
+                'image': f"data:image/png;base64,{img_str}"
             })
     
     return render_template('index.html', pro_colors=PRO_COLORS)
